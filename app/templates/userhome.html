@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Vehicle Service Excellence - Home</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="car-loader"></div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <div class="nav-search">
+        <input type="text" class="search-input" placeholder="Search workshops..." id="navSearch">
+        <button class="search-btn" onclick="searchWorkshops()">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/userhome/">HOME</a></li>
+        <li><a href="#">ABOUT</a></li>
+        <li><a href="#">CONTACT</a></li>
+        <li><a href="/profile/">PROFILE</a></li>
+        <li><a href="#">LOGOUT</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent">
+
+    <!-- Hero Section -->
+    <div>
+        <div class="big-name">
+            VEHICLE<br>SERVICE
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">PREMIER AUTOMOTIVE CARE</div>
+        <div class="divider"></div>
+        <div class="text">
+            Connect with certified vehicle service workshops instantly. 
+            Book appointments, track repairs, and manage your vehicle maintenance all in one place.
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div>
+        <div class="section-title">HOW IT WORKS</div>
+        <div class="divider"></div>
+        <div class="service-cards">
+            <div class="service-card">
+                <i class="fas fa-search-location"></i>
+                <h4>SEARCH</h4>
+                <p>Find nearby workshops by location or service</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-calendar-check"></i>
+                <h4>BOOK</h4>
+                <p>Schedule appointments at your convenience</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-tools"></i>
+                <h4>SERVICE</h4>
+                <p>Get professional vehicle maintenance</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-chart-line"></i>
+                <h4>TRACK</h4>
+                <p>Monitor service progress in real-time</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Workshops -->
+    <div>
+        <div class="section-title">FEATURED WORKSHOPS</div>
+        <div class="divider"></div>
+        <div class="workshop-grid">
+            <div class="workshop-card">
+                <div class="workshop-name">Premium Auto Care</div>
+                <div class="workshop-rating">
+                    <span class="stars">★★★★★</span>
+                    <span>4.8 (234 reviews)</span>
+                </div>
+                <div class="workshop-services">
+                    <span class="service-tag">Oil Change</span>
+                    <span class="service-tag">Engine Repair</span>
+                    <span class="service-tag">AC Service</span>
+                </div>
+                <div class="workshop-price">Starting from $50</div>
+                <div class="workshop-actions">
+                    <button class="view-details-btn">View Details</button>
+                </div>
+            </div>
+            
+            <div class="workshop-card">
+                <div class="workshop-name">Quick Fix Garage</div>
+                <div class="workshop-rating">
+                    <span class="stars">★★★★☆</span>
+                    <span>4.5 (189 reviews)</span>
+                </div>
+                <div class="workshop-services">
+                    <span class="service-tag">Brake Service</span>
+                    <span class="service-tag">Battery</span>
+                    <span class="service-tag">Tires</span>
+                </div>
+                <div class="workshop-price">Starting from $35</div>
+                <div class="workshop-actions">
+                    <button class="view-details-btn">View Details</button>
+                </div>
+            </div>
+            
+            <div class="workshop-card">
+                <div class="workshop-name">Expert Motors</div>
+                <div class="workshop-rating">
+                    <span class="stars">★★★★★</span>
+                    <span>4.9 (412 reviews)</span>
+                </div>
+                <div class="workshop-services">
+                    <span class="service-tag">Engine</span>
+                    <span class="service-tag">Transmission</span>
+                    <span class="service-tag">Diagnostics</span>
+                </div>
+                <div class="workshop-price">Starting from $60</div>
+                <div class="workshop-actions">
+                    <button class="view-details-btn">View Details</button>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn">
+                VIEW ALL WORKSHOPS
+            </button>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div>
+        <div class="section-title">READY TO GET STARTED?</div>
+        <div class="divider"></div>
+        <div class="text">
+            Join thousands of satisfied customers who trust AutoCare for their vehicle maintenance needs.
+        </div>
+        <div style="margin-top: 30px;">
+            <button class="btn" style="margin-right: 15px;">
+                BOOK SERVICE NOW
+            </button>
+            <button class="btn" style="background: transparent; border: 1px solid #c9a227; color: #c9a227;">
+                CREATE ACCOUNT
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<script>
+// Loading screen
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.getElementById('loadingScreen').classList.add('hidden');
+    }, 1500);
+});
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Search workshops
+function searchWorkshops() {
+    const searchValue = document.getElementById('navSearch').value;
+    if (searchValue.trim()) {
+        showNotification('Searching for workshops...');
+    } else {
+        showNotification('Please enter a search term', 'error');
+    }
+}
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+});
+
+createParticles();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP Verification - Motor Vehicle Service Excellence</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+
+<style>
+
+/* Ensure body doesn't hide content */
+body {
+    margin: 0;
+}
+
+/* FIX: new wrapper without using .container */
+.center-wrapper {
+    min-height: calc(100vh - 80px); /* subtract navbar height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 80px; /* space for fixed navbar */
+}
+
+/* Content box */
+.forgot-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.big-name {
+    font-size: 50px;
+    line-height: 50px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.text {
+    max-width: 400px;
+    margin: 0 auto 30px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.otp-icon {
+    font-size: 4rem;
+    color: #c9a227;
+    margin-bottom: 30px;
+}
+
+.success-message {
+    background: rgba(40, 167, 69, 0.1);
+    border: 2px solid #28a745;
+    color: #28a745;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+}
+
+.error-message {
+    background: rgba(220, 53, 69, 0.1);
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+.password-strength {
+    margin-top: 10px;
+    height: 5px;
+    background: #333;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+.strength-weak { background: #dc3545; width: 33%; }
+.strength-medium { background: #ffc107; width: 66%; }
+.strength-strong { background: #28a745; width: 100%; }
+
+.otp-section {
+    margin: 30px 0;
+    padding: 30px;
+    background: rgba(201, 162, 39, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.new-password-section {
+    margin: 30px 0;
+    padding: 30px;
+    background: rgba(40, 167, 69, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+#otp {
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 4px;
+    font-weight: 600;
+    padding: 15px;
+    border: 2px solid #c9a227;
+    background: rgba(201, 162, 39, 0.1);
+    border-radius: 10px;
+    color: #c9a227;
+}
+
+#newPassword, #confirmPassword {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #333;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#newPassword:focus, #confirmPassword:focus {
+    outline: none;
+    border-color: #c9a227;
+    box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+.back-to-login {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.email-display {
+    background: rgba(201, 162, 39, 0.1);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    color: #c9a227;
+    font-weight: 600;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <div class="nav-search">
+        <input type="text" class="search-input" placeholder="Search workshops..." id="navSearch">
+        <button class="search-btn" onclick="searchWorkshops()">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+        <li><a href="profile.html">PROFILE</a></li>
+    </ul>
+</nav>
+
+<div class="particles" id="particles"></div>
+
+<!-- NEW SAFE WRAPPER -->
+<div class="center-wrapper">
+
+    <div class="forgot-container">
+        <div class="big-name">
+            VERIFY<br>OTP
+        </div>
+        
+        <div class="otp-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        
+        <div class="section-title">ENTER OTP</div>
+        <div class="divider"></div>
+        
+        <div class="email-display" id="emailDisplay">
+            <!-- Email will be displayed here -->
+        </div>
+        
+        <div class="text">
+            Enter the 6-digit code sent to your email address.
+        </div>
+
+        <div class="form-container">
+            <div class="otp-section">
+                <form id="otpForm">
+                    <div class="form-group">
+                        <label for="otp">6-DIGIT CODE</label>
+                        <input type="text" id="otp" name="otp" placeholder="Enter 6-digit code" maxlength="6" required>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-check"></i> VERIFY OTP
+                    </button>
+                </form>
+                
+                <div class="error-message" id="otpErrorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Invalid OTP!</strong><br>
+                    Please check the code and try again.
+                </div>
+            </div>
+            
+            <div class="new-password-section" id="newPasswordSection" style="display: none;">
+                <div class="section-title">SET NEW PASSWORD</div>
+                <div class="divider"></div>
+                <form id="newPasswordForm">
+                    <div class="form-group">
+                        <label for="newPassword">NEW PASSWORD</label>
+                        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strengthBar"></div>
+                        </div>
+                        <small style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
+                            Use 8+ characters with mix of letters, numbers & symbols
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">CONFIRM PASSWORD</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="width: 100%;">
+                        <i class="fas fa-lock"></i> RESET PASSWORD
+                    </button>
+                </form>
+            </div>
+            
+            <div class="success-message" id="passwordResetMessage">
+                <i class="fas fa-check-circle"></i>
+                <strong>Password Reset Successful!</strong><br>
+                Your password has been updated. You can now login with your new password.
+            </div>
+            
+            <div class="back-to-login">
+                <p style="color: #bfbfbf; font-size: 14px;">
+                    <a href="forgot-password-email.html" style="color: #c9a227; text-decoration: none;">
+                        <i class="fas fa-arrow-left"></i> Back to Email
+                    </a>
+                    <span style="margin: 0 10px;">|</span>
+                    <a href="login.html" style="color: #c9a227; text-decoration: none;">Back to Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<script>
+
+// Particles
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Search workshops
+function searchWorkshops() {
+    const searchValue = document.getElementById('navSearch').value;
+    if (searchValue.trim()) {
+        showNotification('Searching for workshops...');
+        setTimeout(() => {
+            window.location.href = `search-workshops.html?search=${encodeURIComponent(searchValue)}`;
+        }, 1000);
+    } else {
+        showNotification('Please enter a search term', 'error');
+    }
+}
+
+// Password strength checker
+function checkPasswordStrength(password) {
+    const strengthBar = document.getElementById('strengthBar');
+    let strength = 0;
+    
+    if (password.length >= 8) strength++;
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+    
+    strengthBar.className = 'strength-bar';
+    if (strength === 1) strengthBar.classList.add('strength-weak');
+    else if (strength === 2) strengthBar.classList.add('strength-medium');
+    else if (strength >= 3) strengthBar.classList.add('strength-strong');
+}
+
+// OTP form submission
+document.getElementById('otpForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const otp = document.getElementById('otp').value;
+    
+    if (!otp || otp.length !== 6) {
+        showNotification('Please enter a valid 6-digit OTP', 'error');
+        return;
+    }
+    
+    // Simulate OTP verification (accept "123456" as valid)
+    if (otp === '123456') {
+        document.getElementById('otpErrorMessage').classList.remove('show');
+        document.getElementById('newPasswordSection').style.display = 'block';
+        showNotification('OTP verified successfully!');
+        
+        // Scroll to password section
+        document.getElementById('newPasswordSection').scrollIntoView({ behavior: 'smooth' });
+    } else {
+        document.getElementById('otpErrorMessage').classList.add('show');
+        showNotification('Invalid OTP. Please try again.', 'error');
+    }
+});
+
+// New password form submission
+
+
+// Password input event listener
+document.getElementById('newPassword').addEventListener('input', function() {
+    checkPasswordStrength(this.value);
+});
+
+// Load email from localStorage
+document.addEventListener('DOMContentLoaded', function() {
+    const email = localStorage.getItem('resetEmail');
+    if (email) {
+        document.getElementById('emailDisplay').innerHTML = 
+            `<i class="fas fa-envelope"></i> OTP sent to: ${email}`;
+    } else {
+        // If no email found, redirect back to email page
+        window.location.href = 'forgot-password-email.html';
+    }
+    
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Enter key search for navbar
+    document.getElementById('navSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchWorkshops();
+        }
+    });
+});
+
+createParticles();
+</script>
+
+</body>
+</html>

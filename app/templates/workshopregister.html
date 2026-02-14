@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workshop Registration - Motor Vehicle Service Excellence</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+
+    <div style="text-align: center;">
+        <div class="big-name" style="font-size: 60px; line-height: 60px;">
+            WORKSHOP<br>REGISTRATION
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">REGISTER YOUR WORKSHOP</div>
+        <div class="divider"></div>
+        <div class="text">
+            Join our network of professional vehicle service workshops and connect with customers in your area.
+        </div>
+    </div>
+
+    <div>
+        <div class="form-container">
+             <form method="post" enctype="multipart/form-data" action="{% url 'workshopregister' %}" id="workshopForm">
+            {% csrf_token %} 
+                <div class="form-group">
+                    <label for="workshop-name">WORKSHOP NAME</label>
+                    <input type="text" id="workshop-name" name="name" placeholder="Enter your workshop name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">PHONE NUMBER</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">EMAIL ADDRESS</label>
+                    <input type="email" id="email" name="email" placeholder="workshop@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" name="password" placeholder="Enter a strong password" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">LOCATION</label>
+                    <input type="text" id="location" name="Location" placeholder="Enter your workshop address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="license">UPLOAD LICENSE (PDF)</label>
+                    <input type="file" id="license" name="license" accept=".pdf" required>
+                    <small style="color: #bfbfbf; font-size: 12px; display: block; margin-top: 5px;">
+                        Please upload your business license in PDF format (Max 5MB)
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="operating-hours">OPERATING HOURS</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <input type="time" id="opening-time" name="opening_time" placeholder="Opening Time" required>
+                        <input type="time" id="closing-time" name="closing_time" placeholder="Closing Time" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="working-days">WORKING DAYS</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="monday" checked> Mon
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="tuesday" checked> Tue
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="wednesday" checked> Wed
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="thursday" checked> Thu
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="friday" checked> Fri
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="saturday"> Sat
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="available_days" value="sunday"> Sun
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="slots-per-day">SLOTS PER DAY</label>
+                    <input type="number" id="slots-per-day" name="slots" placeholder="Maximum number of bookings per day" min="1" max="50" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="services">SERVICES OFFERED</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="Oil Change"> Oil Change
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="Engine Repair"> Engine Repair
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="AC Service"> AC Service
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="Brake Service"> Brake Service
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="Battery Service"> Battery Service
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; color: #bfbfbf; font-size: 14px;">
+                            <input type="checkbox" name="services" value="Tire Service"> Tire Service
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">WORKSHOP DESCRIPTION</label>
+                    <textarea id="description" name="description" placeholder="Tell us about your workshop..." rows="4" style="width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 2px solid #c9a227; color: #bfbfbf; font-family: Arial, sans-serif; font-size: 14px; border-radius: 5px; resize: vertical;"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="terms" name="terms" required style="width: auto;">
+                        <span style="color: #bfbfbf; font-size: 14px;">I agree to the Terms of Service and Privacy Policy</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">REGISTER WORKSHOP</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #bfbfbf; font-size: 14px;">
+                    Already have a workshop account? 
+                    <span style="color: #c9a227; text-decoration: none; cursor: pointer;">Sign In</span>
+                </p>
+            </div>
+    </div>
+
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<script>
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Form validation and submission
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+});
+
+createParticles();
+</script>
+
+</body>
+</html>

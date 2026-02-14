@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register - Motor Vehicle Service Excellence</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto;">
+
+    <div style="text-align: center;">
+        <div class="big-name" style="font-size: 60px; line-height: 60px;">
+            CREATE<br>ACCOUNT
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">JOIN AUTOCARE</div>
+        <div class="divider"></div>
+        <div class="text">
+            Create your account to access exclusive benefits, track your service history, and schedule appointments with ease.
+        </div>
+    </div>
+
+    <div>
+        <div class="form-container">
+           <form method="post" enctype="multipart/form-data" action="{% url 'register' %}" id="registerForm">
+            {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">USERNAME</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">EMAIL ADDRESS</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">PHONE NUMBER</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">ADDRESS</label>
+                    <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profile_picture">PROFILE PICTURE</label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">GENDER</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                </div>
+                
+                
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="terms" name="terms" required style="width: auto;">
+                        <span style="color: #bfbfbf; font-size: 14px;">I agree to the Terms of Service and Privacy Policy</span>
+                    </label>
+                </div>
+                 <div class="form-group">
+                    <label for="license">UPLOAD LICENSE (PDF)</label>
+                    <input type="file" id="license" name="license" accept=".pdf">
+                    <small style="color: #bfbfbf; font-size: 12px; display: block; margin-top: 5px;">
+                        Please upload your driver's license in PDF format (Max 5MB)
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">CREATE ACCOUNT</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #bfbfbf; font-size: 14px;">
+                    Already have an account? 
+                    <a href="/login/" style="color: #c9a227; text-decoration: none;">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+});
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+}
+
+createParticles();
+</script>
+
+</body>
+</html>
