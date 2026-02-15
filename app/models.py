@@ -73,9 +73,16 @@ class Booking(models.Model):
     userd = models.ForeignKey(user, on_delete=models.CASCADE)
     workshop = models.ForeignKey(workshop, on_delete=models.CASCADE)
     vehicle = models.ForeignKey(VehicleRegistration, on_delete=models.CASCADE)
-    service = models.CharField(max_length=100)
-    booking_date = models.DateField()
-    booking_time = models.TimeField()
+    SERVICE_CHOICES = (
+        ('Oil Change', 'Oil Change'),
+        ('Engine Repair', 'Engine Repair'),
+        ('AC Service', 'AC Service'),
+        ('Brake Service', 'Brake Service'),
+        ('Battery Service', 'Battery Service'),
+        ('Tire Service', 'Tire Service'),
+    )
+    services = MultiSelectField(choices=SERVICE_CHOICES,null=True, blank=True)
+    booking_time = models.DateField()
     status = models.CharField(max_length=20, default='Pending')
     payment=models.IntegerField(null=True,blank=True)
 

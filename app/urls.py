@@ -24,7 +24,13 @@ urlpatterns = [
     path('workshoplist/', views.workshoplist, name='workshoplist'),  
     path('register_vehicle/', views.register_vehicle, name='register_vehicle'), 
     path('yourvehicles/', views.yourvehicles, name='yourvehicles'), 
-    path("book/", views.book_service, name="book_service"),
+    path("book/<int:id>/", views.book_service, name="book"),
+    path('mybookings/', views.mybookings, name='mybookings'),
+    path('servicerequestpage/', views.servicerequestpage, name='servicerequestpage'),
+    path('update-booking/<int:booking_id>/<str:status>/',
+     views.update_booking_status,
+     name='update_booking_status'),
+
 
     # path('logout/', views.logout_view, name='logout'),
 

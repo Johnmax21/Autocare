@@ -419,14 +419,14 @@
             {% endfor %}
         </div>
 
-        <div class="workshop-actions">
+        <!-- <div class="workshop-actions">
             <a href="{% url 'workshoplist'%}">
                 <button class="action-btn primary-btn">
                     VIEW DETAILS
                 </button>
-            </a>
+            </a> -->
 
-            <a href="{% url 'workshoplist' %}">
+            <a href="{% url 'book' w.id %}">
                 <button class="action-btn secondary-btn">
                     BOOK SERVICE
                 </button>

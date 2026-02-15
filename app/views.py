@@ -368,24 +368,91 @@ def register_vehicle(request):
         )
          return redirect("profile")  # change to your profile URL name
 
-    return render(request, "register_vehicle.html")
+    return render(request, "vehicleregistration.html")
 def yourvehicles(request):
     email=request.session['email']
     cr =user.objects.get(email=email)
     vehicles = VehicleRegistration.objects.filter(userd=cr)
     return render(request, "yourvehicles.html", {"vehicles": vehicles})
-def book_service(request):
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import workshop, user, Booking, VehicleRegistration
+from django.contrib import messages
+from django.utils.dateparse import parse_date
+
+def book_service(request, id):
+    # Get the workshop
+    email = request.session.get('email')
+    dr = get_object_or_404(workshop, id=id)
+    cr = user.objects.get(email=email)
+    vehicl = VehicleRegistration.objects.filter(userd=cr)
+    print(vehicl,"vehicl")
+    print("ggg")
+    context = {
+        'service': dr.services,
+        'vehicles': vehicl,
+        
+    }
+    
+    if not email:
+            messages.error(request, "Please login to book a service.")
+            return redirect("login")
+  
+
+
+    # Split services string into a list if it's stored as comma-separated
+    # If it's already a list in the DB, you can skip this
+    
+
     if request.method == "POST":
-        email=request.session['email']
-        cr =user.objects.get(email=email)
-        workshop_id = request.POST.get("workshop_id")
-        vehicle_id = request.POST.get("vehicle_id")
-        service = request.POST.get("service")
+        
+        selected_services = request.POST.getlist('service')  # returns list
 
-        # Create booking logic here (you need to define the Booking model)
-        # Booking.objects.create(userd=cr, workshop_id=workshop_id, vehicle_id=vehicle_id, service=service)
+        # Booking date & time (we only have date input; you can extend to time if needed)
+        booking_time = request.POST.get('bookingDate')  # optional if you have time field
+        vehicle = request.POST.get('vehicle')
+        gg=VehicleRegistration.objects.get(vehicle_name=vehicle)
+        # Pickup info
+        pickup_lat = request.POST.get('pickup_lat')
+        pickup_lng = request.POST.get('pickup_lng')
+        pickup_location = request.POST.get('pickupLocation')
 
-        return redirect("profile")  # change to your profile URL name
+        # Payment calculation
+        distance_km = float(request.POST.get('distance-km', 0))
+        pickup_charges = distance_km * 20
+        extra_service = 100  # fixed extra
+        total_payment = int(pickup_charges + extra_service)
 
-    # You can also pass available workshops and vehicles to the template for selection
-    return render(request, "book.html")
+        # Save booking
+        booking = Booking.objects.create(
+            userd=cr,
+            workshop=dr,
+            vehicle=gg,
+            services=selected_services,  # MultiSelectField handles list
+            booking_time=booking_time if booking_time else None,
+            payment=total_payment,
+        )
+
+        messages.success(request, f"Booking successful! Total payment: ₹{total_payment}")
+        return redirect("profile")
+
+    return render(request, "book.html", context)
+def mybookings(request):
+    email = request.session.get('email')
+    cr = user.objects.get(email=email)
+    bookings = Booking.objects.filter(userd=cr).order_by('-id')
+
+    return render(request, "mybookings.html", {"bookings": bookings})
+
+def servicerequestpage(request):
+    email = request.session.get('email')
+    cr = workshop.objects.get(email=email)
+    bookings = Booking.objects.filter(workshop=cr)
+    return render(request, "servicerequestpage.html", {"bookings": bookings})
+
+from django.shortcuts import redirect, get_object_or_404
+
+def update_booking_status(request, booking_id, status):
+    booking = get_object_or_404(Booking, id=booking_id)
+    booking.status = status
+    booking.save()
+    return redirect("servicerequestpage")
