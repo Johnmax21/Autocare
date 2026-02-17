@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us - Motor Vehicle Service Excellence</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent">
+
+    <div>
+        <div class="big-name">
+            ABOUT<br>AUTOCARE
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">OUR STORY</div>
+        <div class="divider"></div>
+        <div class="text">
+            With over 20 years of excellence in automotive service, Autocare has become the trusted name in vehicle maintenance and repair. Our team of certified technicians combines decades of experience with the latest diagnostic technology to deliver unparalleled service quality.
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">OUR MISSION</div>
+        <div class="divider"></div>
+        <div class="text">
+            To provide exceptional automotive care that ensures your safety, reliability, and peace of mind on the road. We are committed to transparency, quality workmanship, and customer satisfaction in every service we perform.
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">WHY CHOOSE US</div>
+        <div class="divider"></div>
+        <div class="service-cards">
+            <div class="service-card">
+                <i class="fas fa-award"></i>
+                <h4>CERTIFIED TECHNICIANS</h4>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-shield-alt"></i>
+                <h4>WARRANTY PROTECTION</h4>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-clock"></i>
+                <h4>FAST SERVICE</h4>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-dollar-sign"></i>
+                <h4>FAIR PRICING</h4>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+});
+
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+}
+
+createParticles();
+</script>
+
+</body>
+</html>

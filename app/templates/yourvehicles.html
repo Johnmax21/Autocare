@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Vehicles - Motor Vehicle Service Excellence</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<style>
+/* Your Vehicles Specific Styles */
+.vehicles-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.vehicle-card {
+    background: rgba(201, 162, 39, 0.05);
+    border: 2px solid #c9a227;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.vehicle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.vehicle-card:hover::before {
+    left: 100%;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(201, 162, 39, 0.3);
+    background: rgba(201, 162, 39, 0.1);
+    border-color: #fff;
+}
+
+.vehicle-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.vehicle-image {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #c9a227, #8a7d1f);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #0c0c0c;
+}
+
+.vehicle-info {
+    flex: 1;
+}
+
+.vehicle-name {
+    color: #c9a227;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.vehicle-details {
+    color: #bfbfbf;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.vehicle-specs {
+    margin-bottom: 20px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #bfbfbf;
+    font-size: 14px;
+}
+
+.spec-item i {
+    color: #c9a227;
+    width: 20px;
+    text-align: center;
+}
+
+.vehicle-status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+.status-active {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+.status-inactive {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.vehicle-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    border-radius: 5px;
+}
+
+.primary-btn {
+    background: #c9a227;
+    color: #0c0c0c;
+}
+
+.primary-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 162, 39, 0.5);
+}
+
+.secondary-btn {
+    background: transparent;
+    color: #c9a227;
+    border: 1px solid #c9a227;
+}
+
+.secondary-btn:hover {
+    background: #c9a227;
+    color: #0c0c0c;
+}
+
+.danger-btn {
+    background: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.danger-btn:hover {
+    background: #dc3545;
+    color: #fff;
+}
+
+.add-vehicle-btn {
+    background: linear-gradient(135deg, #c9a227, #8a7d1f);
+    color: #0c0c0c;
+    padding: 15px 30px;
+    border: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    border-radius: 5px;
+    margin: 30px auto;
+    display: block;
+}
+
+.add-vehicle-btn:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(201, 162, 39, 0.5);
+}
+
+/* Responsive Design */
+@media(max-width:900px) {
+    .vehicles-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 30px 20px;
+    }
+    
+    .vehicle-card {
+        padding: 20px;
+    }
+}
+
+@media(max-width:600px) {
+    .vehicles-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .vehicle-card {
+        padding: 15px;
+    }
+    
+    .vehicle-actions {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <div class="nav-search">
+        <input type="text" class="search-input" placeholder="Search vehicles..." id="navSearch">
+        <button class="search-btn" onclick="searchVehicles()">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+        <li><a href="profile.html">PROFILE</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent">
+
+    <div style="grid-column: 1 / -1;">
+        <div class="section-title">YOUR VEHICLES</div>
+        <div class="divider"></div>
+        <div class="text">
+            Manage your registered vehicles and add new ones to get personalized service recommendations.
+        </div>
+    </div>
+
+    <!-- Vehicles Grid -->
+    <<div class="vehicles-container">
+
+{% for v in vehicles %}
+    <div class="vehicle-card">
+        <div class="vehicle-header">
+            <div class="vehicle-image">
+                {% if v.vehicle_image %}
+                    <img src="{{ v.vehicle_image.url }}" width="80" height="60">
+                {% else %}
+                    <i class="fas fa-car"></i>
+                {% endif %}
+            </div>
+
+            <div class="vehicle-info">
+                <div class="vehicle-name">{{ v.vehicle_name }}</div>
+                <div class="vehicle-details">{{ v.vehicle_model }}</div>
+            </div>
+        </div>
+
+        <div class="vehicle-specs">
+            <div class="spec-item">
+                <i class="fas fa-id-card"></i>
+                <span>{{ v.license_plate }}</span>
+            </div>
+        </div>
+
+        <div class="vehicle-status status-active">
+            ACTIVE
+        </div>
+
+        <div class="vehicle-actions">
+            <a href="{% url 'edit_vehicle' v.id %}">
+                <button class="action-btn primary-btn">
+                    <i class="fas fa-edit"></i> EDIT
+                </button>
+            </a>
+
+            <a href="{% url 'vehicle_details' v.id %}">
+                <button class="action-btn secondary-btn">
+                    <i class="fas fa-eye"></i> DETAILS
+                </button>
+            </a>
+
+            <a href="{% url 'delete_vehicle' v.id %}">
+                <button class="action-btn danger-btn">
+                    <i class="fas fa-trash"></i> DELETE
+                </button>
+            </a>
+        </div>
+    </div>
+
+{% empty %}
+    <p style="color:white;">No vehicles added yet.</p>
+{% endfor %}
+
+</div>
+
+<!-- Add New Vehicle Button -->
+<a href="{% url 'register_vehicle' %}">
+    <button class="add-vehicle-btn">
+        <i class="fas fa-plus"></i> ADD NEW VEHICLE
+    </button>
+</a>
+
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<script>
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Add new vehicle
+function addNewVehicle() {
+    showNotification('Redirecting to vehicle registration...');
+    setTimeout(() => {
+        window.location.href = 'vehicle-registration.html';
+    }, 1000);
+}
+
+// Edit vehicle
+function editVehicle(vehicleId) {
+    showNotification('Edit vehicle feature coming soon!');
+}
+
+// View vehicle details
+function viewDetails(vehicleId) {
+    showNotification('Loading vehicle details...');
+}
+
+// Delete vehicle
+function deleteVehicle(vehicleId) {
+    if (confirm('Are you sure you want to delete this vehicle?')) {
+        showNotification('Vehicle deleted successfully!');
+        // In a real app, this would remove the vehicle from the list
+        setTimeout(() => {
+            location.reload();
+        }, 1500);
+    }
+}
+
+// Search vehicles
+function searchVehicles() {
+    const searchValue = document.getElementById('navSearch').value;
+    if (searchValue.trim()) {
+        showNotification('Searching vehicles...');
+        // In a real app, this would filter the vehicle list
+    } else {
+        showNotification('Please enter a search term', 'error');
+    }
+}
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+    
+    // Enter key search for navbar
+    document.getElementById('navSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchVehicles();
+        }
+    });
+});
+
+createParticles();
+</script>
+
+</body>
+</html>

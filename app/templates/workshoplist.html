@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+{%load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workshop List - Motor Vehicle Service Excellence</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<style>
+/* Workshop List Specific Styles */
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-label {
+    display: block;
+    color: #c9a227;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #c9a227;
+    color: #bfbfbf;
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+}
+
+.filter-checkboxes {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #c9a227;
+    border-radius: 5px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.filter-checkboxes label:hover {
+    color: #c9a227;
+}
+
+.filter-checkboxes input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: #c9a227;
+}
+
+.filter-label i {
+    margin-right: 8px;
+}
+
+.filter-label i.fa-chevron-down {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.filter-label i.fa-chevron-up {
+    transform: rotate(180deg);
+}
+
+.workshop-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workshop-card {
+    background: rgba(201, 162, 39, 0.05);
+    border: 2px solid #c9a227;
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.workshop-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.workshop-card:hover::before {
+    left: 100%;
+}
+
+.workshop-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(201, 162, 39, 0.3);
+    background: rgba(201, 162, 39, 0.1);
+    border-color: #fff;
+}
+
+.workshop-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.workshop-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #c9a227, #8a7d1f);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #0c0c0c;
+}
+
+.workshop-title {
+    flex: 1;
+}
+
+.workshop-name {
+    color: #c9a227;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.workshop-rating {
+    color: #bfbfbf;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stars {
+    color: #c9a227;
+}
+
+.workshop-info {
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: #bfbfbf;
+    font-size: 14px;
+}
+
+.info-item i {
+    color: #c9a227;
+    width: 20px;
+    text-align: center;
+}
+
+.service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.service-tag {
+    background: rgba(201, 162, 39, 0.2);
+    color: #c9a227;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid #c9a227;
+}
+
+.workshop-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    border-radius: 5px;
+}
+
+.primary-btn {
+    background: #c9a227;
+    color: #0c0c0c;
+}
+
+.primary-btn:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 162, 39, 0.5);
+}
+
+.secondary-btn {
+    background: transparent;
+    color: #c9a227;
+    border: 1px solid #c9a227;
+}
+
+.secondary-btn:hover {
+    background: #c9a227;
+    color: #0c0c0c;
+}
+
+/* Responsive Design */
+@media(max-width:900px) {
+    .workshop-list-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 30px 20px;
+    }
+    
+    .workshop-card {
+        padding: 20px;
+    }
+}
+
+@media(max-width:600px) {
+    .workshop-list-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .workshop-card {
+        padding: 15px;
+    }
+    
+    .workshop-name {
+        font-size: 20px;
+    }
+    
+    .workshop-actions {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <div class="nav-search">
+        <input type="text" class="search-input" placeholder="Search workshops..." id="navSearch">
+        <button class="search-btn" onclick="searchWorkshops()">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+        <li><a href="profile.html">PROFILE</a></li>
+    </ul>
+</nav>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container page-content" id="pageContent">
+    <div style="display: grid; grid-template-columns: 250px 1fr; gap: 30px; align-items: start;">
+        <!-- Left Sidebar Filters -->
+        <form method="GET">
+
+<!-- Rating Filter -->
+<div class="filter-group">
+    <label class="filter-label">
+        <i class="fas fa-star"></i> RATING
+    </label>
+
+    <div class="filter-checkboxes">
+    
+    </div>
+</div>
+
+<!-- Service Filter -->
+<div class="filter-group" style="margin-top: 20px;">
+    <label class="filter-label">
+        <i class="fas fa-wrench"></i> SERVICES
+    </label>
+
+    <div class="filter-checkboxes">
+        {% for key,value in service_choices %}
+        <label>
+            <input type="checkbox" name="services" value="{{ key }}"
+                {% if key in request.GET.getlist.services %}checked{% endif %}>
+            {{ value }}
+        </label>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Location Filter -->
+<div class="filter-group" style="margin-top: 20px;">
+    <label class="filter-label">
+        <i class="fas fa-map-marker-alt"></i> LOCATION
+    </label>
+
+    <div class="filter-checkboxes">
+        {% for loc in locations %}
+        <label>
+            <input type="checkbox" name="location" value="{{ loc }}"
+                {% if loc in request.GET.getlist.location %}checked{% endif %}>
+            {{ loc }}
+        </label>
+        {% endfor %}
+    </div>
+</div>
+
+<button type="submit" class="btn" style="width: 100%; margin-top: 20px;">
+    APPLY FILTER
+</button>
+
+<a href="{% url 'workshoplist' %}">
+    <button type="button" class="btn"
+        style="width:100%; margin-top:10px; background:transparent; border:1px solid #c9a227;">
+        RESET
+    </button>
+</a>
+
+</form>
+
+
+        <!-- Right Content Area -->
+        <div>
+            <div style="grid-column: 1 / -1;">
+                <div class="section-title">WORKSHOP LIST</div>
+                <div class="divider"></div>
+                <div class="text">
+                    Browse our network of certified vehicle service workshops and find the perfect match for your needs.
+                </div>
+            </div>
+
+            <!-- Workshop List -->
+   <div class="workshop-list-container">
+
+{% for w in workshops %}
+    <div class="workshop-card">
+        <div class="workshop-header">
+            <div class="workshop-icon">
+                {% if w.workshop_picture %}
+                    <img src="{{ w.workshop_picture.url }}" width="60" height="60">
+                {% else %}
+                    <i class="fas fa-wrench"></i>
+                {% endif %}
+            </div>
+
+            <div class="workshop-title">
+                <div class="workshop-name">{{ w.name }}</div>
+                <div class="workshop-rating">
+                    <span>{{ w.email }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="workshop-info">
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ w.Location }}</span>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <span>{{ w.phone }}</span>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <span>
+                    {{ w.opening_time }} - {{ w.closing_time }}
+                </span>
+            </div>
+        </div>
+
+        <div class="service-tags">
+            {% for service in w.services %}
+                <span class="service-tag">{{ service }}</span>
+            {% endfor %}
+        </div>
+
+        <!-- <div class="workshop-actions">
+            <a href="{% url 'workshoplist'%}">
+                <button class="action-btn primary-btn">
+                    VIEW DETAILS
+                </button>
+            </a> -->
+
+            <a href="{% url 'book' w.id %}">
+                <button class="action-btn secondary-btn">
+                    BOOK SERVICE
+                </button>
+            </a>
+        </div>
+    </div>
+{% empty %}
+    <p>No workshops available.</p>
+{% endfor %}
+
+</div>
+
+<!-- Notification -->
+<div class="notification" id="notification"></div>
+
+<script>
+function createParticles() {
+    const particlesContainer = document.getElementById('particles');
+    if (particlesContainer) {
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type} show`;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// View workshop details
+function viewDetails(workshopId) {
+    showNotification('Loading workshop details...');
+    setTimeout(() => {
+        window.location.href = `workshop-details.html?id=${workshopId}`;
+    }, 1000);
+}
+
+// Toggle filter visibility
+function toggleFilter(filterType) {
+    const filterId = filterType + '-filters';
+    const chevronId = filterType + '-chevron';
+    const filterDiv = document.getElementById(filterId);
+    const chevron = document.getElementById(chevronId);
+    
+    if (filterDiv.style.display === 'none') {
+        filterDiv.style.display = 'block';
+        chevron.className = 'fas fa-chevron-up';
+    } else {
+        filterDiv.style.display = 'none';
+        chevron.className = 'fas fa-chevron-down';
+    }
+}
+
+// Filter workshops
+function filterWorkshops() {
+    // Get checked rating checkboxes
+    const ratingCheckboxes = document.querySelectorAll('#rating-filters input[type="checkbox"]:checked');
+    const ratingFilters = Array.from(ratingCheckboxes).map(cb => parseFloat(cb.value));
+    
+    // Get checked service checkboxes
+    const serviceCheckboxes = document.querySelectorAll('#service-filters input[type="checkbox"]:checked');
+    const serviceFilters = Array.from(serviceCheckboxes).map(cb => cb.value);
+    
+    // Get checked location checkboxes
+    const locationCheckboxes = document.querySelectorAll('#location-filters input[type="checkbox"]:checked');
+    const locationFilters = Array.from(locationCheckboxes).map(cb => cb.value);
+    
+    const workshopCards = document.querySelectorAll('.workshop-card');
+    
+    workshopCards.forEach(card => {
+        let showCard = true;
+        
+        // Get workshop data from card (in real app, this would come from data attributes)
+        const workshopName = card.querySelector('.workshop-name').textContent;
+        const location = card.querySelector('.info-item span').textContent;
+        const serviceTags = Array.from(card.querySelectorAll('.service-tag')).map(tag => tag.textContent);
+        const ratingText = card.querySelector('.workshop-rating span:last-child').textContent;
+        const rating = parseFloat(ratingText.match(/[\d.]+/)[0]);
+        
+        // Apply rating filters (if any checked)
+        if (ratingFilters.length > 0 && !ratingFilters.some(filter => rating >= filter)) {
+            showCard = false;
+        }
+        
+        // Apply service filters (if any checked)
+        if (serviceFilters.length > 0 && !serviceFilters.some(filter => serviceTags.includes(filter))) {
+            showCard = false;
+        }
+        
+        // Apply location filters (if any checked)
+        if (locationFilters.length > 0 && !locationFilters.some(filter => location.includes(filter))) {
+            showCard = false;
+        }
+        
+        // Show/hide card
+        card.style.display = showCard ? 'block' : 'none';
+    });
+    
+    showNotification('Filters applied!');
+}
+
+// Reset filters
+function resetFilters() {
+    // Uncheck all rating checkboxes
+    const ratingCheckboxes = document.querySelectorAll('#rating-filters input[type="checkbox"]');
+    ratingCheckboxes.forEach(checkbox => checkbox.checked = false);
+    
+    // Uncheck all service checkboxes
+    const serviceCheckboxes = document.querySelectorAll('#service-filters input[type="checkbox"]');
+    serviceCheckboxes.forEach(checkbox => checkbox.checked = false);
+    
+    // Uncheck all location checkboxes
+    const locationCheckboxes = document.querySelectorAll('#location-filters input[type="checkbox"]');
+    locationCheckboxes.forEach(checkbox => checkbox.checked = false);
+    
+    // Show all workshop cards
+    const workshopCards = document.querySelectorAll('.workshop-card');
+    workshopCards.forEach(card => {
+        card.style.display = 'block';
+    });
+    
+    showNotification('Filters reset!');
+}
+
+// Book service
+function bookService(workshopId) {
+    showNotification('Booking feature coming soon!');
+}
+
+// Search workshops
+function searchWorkshops() {
+    const searchValue = document.getElementById('navSearch').value;
+    if (searchValue.trim()) {
+        showNotification('Searching for workshops...');
+        setTimeout(() => {
+            window.location.href = `search-workshops.html?search=${encodeURIComponent(searchValue)}`;
+        }, 1000);
+    } else {
+        showNotification('Please enter a search term', 'error');
+    }
+}
+
+// Smooth page transitions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            
+            // Only apply transition for internal pages
+            if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                e.preventDefault();
+                
+                // Add exit animation
+                document.body.classList.add('page-exit');
+                
+                // Navigate after animation
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 500);
+            }
+        });
+    });
+
+    // Trigger page content animation
+    const pageContent = document.getElementById('pageContent');
+    if (pageContent) {
+        setTimeout(() => {
+            pageContent.classList.add('loaded');
+        }, 100);
+    }
+    
+    // Enter key search for navbar
+    document.getElementById('navSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchWorkshops();
+        }
+    });
+});
+
+createParticles();
+</script>
+
+</body>
+</html>
