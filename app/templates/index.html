@@ -139,10 +139,10 @@
             Join thousands of satisfied customers who trust AutoCare for their vehicle maintenance needs.
         </div>
         <div style="margin-top: 30px;">
-            <button class="btn" onclick="window.location.href='search-workshops.html'" style="margin-right: 15px;">
+            <button class="btn" onclick="window.location.href='/login/'" style="margin-right: 15px;">
                 BOOK SERVICE NOW
             </button>
-            <button class="btn" style="background: transparent; border: 1px solid #c9a227; color: #c9a227;" onclick="window.location.href='register.html'">
+            <button class="btn" style="background: transparent; border: 1px solid #c9a227; color: #c9a227;" onclick="window.location.href='/login/'">
                 CREATE ACCOUNT
             </button>
         </div>
@@ -189,7 +189,7 @@ function searchWorkshops() {
     if (searchValue.trim()) {
         showNotification('Searching for workshops...');
         setTimeout(() => {
-            window.location.href = `search-workshops.html?search=${encodeURIComponent(searchValue)}`;
+          window.location.href = '/login/';
         }, 1000);
     } else {
         showNotification('Please enter a search term', 'error');

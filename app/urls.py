@@ -33,7 +33,10 @@ urlpatterns = [
      views.update_booking_status,
      name='update_booking_status'),
      path("pay/<int:booking_id>/", views.make_payment, name="make_payment"),
-  path("payment-success/", views.payment_success, name="payment_success")
+  path("payment-success/", views.payment_success, name="payment_success"),
+# patth('feedback/<int:booking_id>/', views.submit_feedback, name='submit_feedback'),
+path("adminlogin/", views.adminlogin, name="adminlogin"),
+path("dashboard/", views.admin, name="admin_dashboard"),
 
 
     # path('logout/', views.logout_view, name='logout'),

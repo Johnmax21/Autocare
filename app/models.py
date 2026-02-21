@@ -95,3 +95,12 @@ class transaction(models.Model):
     order_id= models.CharField(max_length=225)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, default='Pending')
+
+
+
+    class Feedback(models.Model):
+        userd = models.ForeignKey(user, on_delete=models.CASCADE)
+        workshop = models.ForeignKey(workshop, on_delete=models.CASCADE)
+        booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+        rating = models.IntegerField()
+        comment = models.TextField()

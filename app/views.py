@@ -18,9 +18,23 @@ def index(request):
       
         "is_logged_in": is_logged_in
     })
+def feedbacback(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
 
+        # Here you can save the feedback to the database or send an email
 
+        return JsonResponse({'status': 'success', 'message': 'Feedback received!'})
+    else:
+        return HttpResponseBadRequest("Invalid request method.")
 
+def adminlogin(request):
+            return render(request, 'adminlogin.html')
+            
+def admin(request):
+            return render(request, 'admin.html') 
 
 # views.py
 

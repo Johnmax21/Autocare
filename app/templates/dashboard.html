@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>ADMIN PANEL</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="users.html">Users</a></li>
+                <li><a href="workshops.html">Workshops</a></li>
+                <li><a href="vehicles.html">Vehicles</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="admin-login.html">Logout</a></li>
+            </ul>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content">
+            <div class="content-header">
+                <h1>Dashboard</h1>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">245</span>
+                    <span class="stat-label">Total Users</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">18</span>
+                    <span class="stat-label">Workshops</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">156</span>
+                    <span class="stat-label">Vehicles</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">89</span>
+                    <span class="stat-label">Transactions</span>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>New User Registration</td>
+                            <td>John Doe</td>
+                            <td>2024-02-15</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Service Booking</td>
+                            <td>Jane Smith</td>
+                            <td>2024-02-14</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>Workshop Registration</td>
+                            <td>Auto Care Center</td>
+                            <td>2024-02-13</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
