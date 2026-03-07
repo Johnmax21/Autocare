@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "parknavi/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "parknavi/wsgi.py"
+    }
+  ]
+}
