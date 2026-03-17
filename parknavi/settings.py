@@ -26,10 +26,21 @@ SECRET_KEY = 'django-insecure-3^8eo4krz7bjfq+419g6a(dr&2ob9$kw-9=r(blbb4owmy0di@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = False
+
+ALLOWED_HOSTS = ["autocarew2.onrender.com"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://autocarew2.onrender.com"
+]
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
