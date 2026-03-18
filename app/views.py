@@ -139,6 +139,7 @@ def forgotpassword(request):
         try:
             user_obj = user.objects.get(email=email)
             otp = random.randint(100000, 999999)
+            print(otp,"otp")
 
             request.session['reset_email'] = email
             request.session['reset_otp'] = str(otp)
@@ -182,13 +183,15 @@ def verify_otp_view(request):
 
 def reset_password_view(request):
     if request.method == 'POST':
-        new_password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        new_password = request.POST.get('newPassword')
+        print(new_password,"new password")
+        confirm_password = request.POST.get('confirmPassword')
 
         if new_password != confirm_password:
             return render(request, 'reset_password.html', {'error': 'Passwords do not match.'})
 
         email = request.session.get('reset_email')
+        print(email,"email in reset")
         try:
             user_obj = user.objects.get(email=email)
             user_obj.password = new_password  # ⚠️ Should hash this in real apps!
