@@ -217,7 +217,7 @@ def profile(request):
     
     # Fetch user information from the database
     cr = get_object_or_404(user, email=email)
-    
+    print(cr.profile_picture.url)
     # Prepare user information for rendering
     user_info = {
         'first_name': cr.usernname,

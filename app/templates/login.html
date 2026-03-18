@@ -14,8 +14,16 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{% static 'styles.css' %}">
+
 </head>
 <body>
+<!-- Preloader -->
+<div id="splash">
+    <div class="splash-content">
+        <i class="fas fa-car"></i>
+        <h1>AUTOCARE</h1>
+    </div>
+</div>
 
 <!-- Navbar -->
 
@@ -78,6 +86,34 @@
 </div>
 
 <script>
+window.addEventListener("load", function () {
+    const splash = document.getElementById("splash");
+    const pageContent = document.getElementById("pageContent");
+
+    // Hide main content initially
+    if (pageContent) {
+        pageContent.style.opacity = "0";
+    }
+
+    setTimeout(() => {
+        splash.style.opacity = "0";
+        splash.style.transition = "opacity 0.6s ease";
+
+        setTimeout(() => {
+            splash.style.display = "none";
+
+            // Show page smoothly
+            if (pageContent) {
+                pageContent.style.opacity = "1";
+                pageContent.classList.add("loaded");
+            }
+
+            document.body.classList.add("loaded");
+
+        }, 600);
+
+    }, 2000); // ⏱️ splash duration (2 sec)
+});
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
     for (let i = 0; i < 50; i++) {
@@ -162,7 +198,11 @@ function createParticles() {
 }
 
 createParticles();
+// Hide preloader after page loads
+
 </script>
 
 </body>
+<!-- Preloader -->
+
 </html>

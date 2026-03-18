@@ -2,18 +2,137 @@
 {%load static %}
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile - Motor Vehicle Service Excellence</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profile - Motor Vehicle Service Excellence</title>
 
-<!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Custom CSS -->
-<link rel="stylesheet" href="{% static 'styles.css' %}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;           /* ← no page scroll */
+            background: #0c0c0c;
+            font-family: 'Oswald', sans-serif;
+            color: white;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(201,162,39,0.25);
+        }
+
+        .page-content {
+            height: 100dvh;             /* modern full visible height (handles address bar) */
+            height: 100vh;              /* fallback */
+            padding-top: 70px;          /* ← space for fixed navbar - adjust according to your navbar height */
+            padding-bottom: 20px;
+            overflow-y: auto;           /* ← only this area scrolls if needed */
+            -webkit-overflow-scrolling: touch; /* smooth iOS scrolling */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;    /* centers content vertically if short */
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1rem 1.2rem;
+        }
+
+        .profile-image-wrapper {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a227, #8a7d1f);
+            margin: 0 auto 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #c9a227;
+            box-shadow: 0 0 20px rgba(201,162,39,0.3);
+            overflow: hidden;
+        }
+
+        .profile-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .form-group {
+            margin-bottom: 1.3rem;
+        }
+
+        .form-group label {
+            color: #c9a227;
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .form-group input[readonly] {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,162,39,0.35);
+            color: #eee;
+            cursor: default;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.9rem;
+            font-size: 1.05rem;
+        }
+
+        /* Small screens → tighter spacing */
+        @media (max-width: 576px) {
+            .page-content {
+                padding-top: 60px;      /* smaller navbar space if needed */
+                padding: 1rem 0.9rem;
+            }
+            .profile-image-wrapper {
+                width: 110px;
+                height: 110px;
+            }
+            .form-container {
+                padding: 0.8rem;
+            }
+        }
+
+        /* Very tall screens → don't stretch too much */
+        @media (min-height: 900px) {
+            .form-container {
+                justify-content: flex-start;
+                padding-top: 3rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -25,12 +144,7 @@
 <!-- Navbar -->
 <nav class="navbar">
     <div class="nav-logo">AUTOCARE</div>
-    <div class="nav-search">
-        <input type="text" class="search-input" placeholder="Search workshops..." id="navSearch">
-        <button class="search-btn" onclick="searchWorkshops()">
-            <i class="fas fa-search"></i>
-        </button>
-    </div>
+ 
     <ul class="nav-links">
         <li><a href="index.html">HOME</a></li>
         <li><a href="about.html">ABOUT</a></li>
@@ -40,80 +154,74 @@
         <li><a href="profile.html">PROFILE</a></li>
     </ul>
 </nav>
+<button 
+    onclick="history.back()" 
+    style="position:fixed; top:80px; left:16px; z-index:1000; width:15px; height:15px; border-radius:50%; background:rgba(201,162,39,0.2); border:1px solid #c9a227; color:#c9a227; font-size:1.4rem; display:flex; align-items:center; justify-content:center; cursor:pointer;"
+>
+    <i class="fas fa-arrow-left"></i>
+</button>
 
 <!-- Particles -->
 <div class="particles" id="particles"></div>
 
-<div class="container page-content" id="pageContent" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto;">
+<div class="page-content" id="pageContent">
 
     <div style="text-align: center;">
         <div class="section-title">MY PROFILE</div>
         <div class="divider"></div>
     </div>
 
-    <div>
-       <div class="form-container">
+    <div class="form-container">
 
-    <!-- Profile Image -->
-    <div style="text-align: center; margin-bottom: 30px;">
-        <div style="width: 120px; height: 120px; border-radius: 50%; 
-                    background: linear-gradient(135deg, #c9a227, #8a7d1f); 
-                    margin: 0 auto; display: flex; align-items: center; 
-                    justify-content: center; border: 3px solid #c9a227; 
-                    box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);">
-
-            {% if image %}
-                <img src="{{ image.url }}" 
-                     style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
-            {% else %}
-                <i class="fas fa-user" style="font-size: 48px; color: #0c0c0c;"></i>
-            {% endif %}
-
+        <!-- Profile Image -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div class="profile-image-wrapper">
+                {% if image %}
+                    <img src="{{ image.url }}" alt="Profile">
+                {% else %}
+                    <i class="fas fa-user" style="font-size: 48px; color: #0c0c0c;"></i>
+                {% endif %}
+            </div>
         </div>
-    </div>
 
-    <!-- Profile Information -->
-    <div class="form-group">
-        <label>NAME</label>
-        <input type="text" value="{{ first_name }}" readonly
-               style="background: rgba(255, 255, 255, 0.05); cursor: default;">
-    </div>
+        <!-- Profile Information -->
+        <div class="form-group">
+            <label>NAME</label>
+            <input type="text" value="{{ first_name }}" readonly>
+        </div>
 
-    <div class="form-group">
-        <label>EMAIL ADDRESS</label>
-        <input type="email" value="{{ email }}" readonly
-               style="background: rgba(255, 255, 255, 0.05); cursor: default;">
-    </div>
+        <div class="form-group">
+            <label>EMAIL ADDRESS</label>
+            <input type="email" value="{{ email }}" readonly>
+        </div>
 
-    <div class="form-group">
-        <label>PHONE NUMBER</label>
-        <input type="tel" value="{{ phone }}" readonly
-               style="background: rgba(255, 255, 255, 0.05); cursor: default;">
-    </div>
+        <div class="form-group">
+            <label>PHONE NUMBER</label>
+            <input type="tel" value="{{ phone }}" readonly>
+        </div>
 
-    <div class="form-group">
-        <label>ADDRESS</label>
-        <input type="text" value="{{ address }}" readonly
-               style="background: rgba(255, 255, 255, 0.05); cursor: default;">
-    </div>
+        <div class="form-group">
+            <label>ADDRESS</label>
+            <input type="text" value="{{ address }}" readonly>
+        </div>
 
-    <div class="form-group">
-        <label>GENDER</label>
-        <input type="text" value="{{ gender }}" readonly
-               style="background: rgba(255, 255, 255, 0.05); cursor: default;">
-    </div>
+        <div class="form-group">
+            <label>GENDER</label>
+            <input type="text" value="{{ gender }}" readonly>
+        </div>
 
-    <!-- Action Buttons -->
-    <div style="display: flex; gap: 15px; margin-top: 30px;">
-        <button class="btn" onclick="editProfile()" style="flex: 1;">
-            <i class="fas fa-edit"></i> EDIT PROFILE
-        </button>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn" onclick="editProfile()">
+                <i class="fas fa-edit"></i> EDIT PROFILE
+            </button>
 
-        <button class="btn" onclick="goHome()" 
-                style="flex: 1; background: transparent; 
-                       border: 1px solid #c9a227; color: #c9a227;">
-            <i class="fas fa-home"></i> BACK TO HOME
-        </button>
+            <button class="btn" onclick="goHome()" 
+                    style="background: transparent; border: 1px solid #c9a227; color: #c9a227;">
+                <i class="fas fa-home"></i> BACK TO HOME
+            </button>
+        </div>
+
     </div>
 
 </div>
@@ -122,12 +230,14 @@
 <div class="notification" id="notification"></div>
 
 <script>
-// Loading screen
+// Your original scripts here (unchanged)
 window.addEventListener('load', function() {
     setTimeout(function() {
         document.getElementById('loadingScreen').classList.add('hidden');
     }, 1500);
 });
+
+// ... rest of your functions ...
 
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
@@ -165,35 +275,19 @@ function goHome() {
 }
 
 // Search workshops
-function searchWorkshops() {
-    const searchValue = document.getElementById('navSearch').value;
-    if (searchValue.trim()) {
-        showNotification('Searching for workshops...');
-        setTimeout(() => {
-            window.location.href = `search-workshops.html?search=${encodeURIComponent(searchValue)}`;
-        }, 1000);
-    } else {
-        showNotification('Please enter a search term', 'error');
-    }
-}
+
 
 // Smooth page transitions
 document.addEventListener('DOMContentLoaded', function() {
-    // Add click handlers to navigation links
     const navLinks = document.querySelectorAll('.nav-links a');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             
-            // Only apply transition for internal pages
             if (href && href !== '#' && !href.startsWith('http') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
                 e.preventDefault();
-                
-                // Add exit animation
                 document.body.classList.add('page-exit');
-                
-                // Navigate after animation
                 setTimeout(() => {
                     window.location.href = href;
                 }, 500);
@@ -201,7 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Trigger page content animation
     const pageContent = document.getElementById('pageContent');
     if (pageContent) {
         setTimeout(() => {
@@ -209,7 +302,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 100);
     }
     
-    // Enter key search for navbar
     document.getElementById('navSearch').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             searchWorkshops();
