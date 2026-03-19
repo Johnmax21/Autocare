@@ -85,6 +85,8 @@ class Booking(models.Model):
     booking_time = models.DateField()
     status = models.CharField(max_length=20, default='Pending')
     payment=models.IntegerField(null=True,blank=True)
+    is_paid = models.BooleanField(default=False) 
+
 
 class transaction(models.Model):
     userd = models.ForeignKey(user, on_delete=models.CASCADE)

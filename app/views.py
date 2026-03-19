@@ -443,7 +443,6 @@ def mybookings(request):
     email = request.session.get('email')
     cr = user.objects.get(email=email)
     bookings = Booking.objects.filter(userd=cr).order_by('-id')
-
     return render(request, "mybookings.html", {"bookings": bookings})
 
 def servicerequestpage(request):
