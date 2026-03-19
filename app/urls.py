@@ -30,6 +30,8 @@ urlpatterns = [
     path('update-booking/<int:booking_id>/<str:status>/',
      views.update_booking_status,
      name='update_booking_status'),
+        path("pay/<int:booking_id>/", views.make_payment, name="make_payment"),
+  path("payment-success/", views.payment_success, name="payment_success")
 
 
     # path('logout/', views.logout_view, name='logout'),

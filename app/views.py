@@ -459,3 +459,63 @@ def update_booking_status(request, booking_id, status):
     booking.status = status
     booking.save()
     return redirect("servicerequestpage")
+
+
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404
+from .models import Booking, transaction
+
+RAZOR_KEY_ID = "rzp_test_X5OfG2jiWrAzSj"
+RAZOR_KEY_SECRET = "SsCovWWZSwB1TGd1rSoIiwF3"
+
+def make_payment(request, booking_id):
+
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    client = razorpay.Client(auth=(RAZOR_KEY_ID, RAZOR_KEY_SECRET))
+
+    amount = booking.payment * 100   # Razorpay needs paise
+
+    payment_order = client.order.create({
+        'amount': amount,
+        'currency': 'INR',
+        'payment_capture': '1'
+    })
+
+    context = {
+        'booking': booking,
+        'order_id': payment_order['id'],
+        'razor_key': RAZOR_KEY_ID,
+        'amount': amount
+    }
+
+    return render(request, "payment.html", context)
+
+from django.shortcuts import render
+from .models import Booking, transaction
+
+def payment_success(request):
+
+    booking_id = request.GET.get("booking_id")
+
+    booking = Booking.objects.get(id=booking_id)
+
+    # mark booking paid
+    booking.is_paid = True
+    booking.save()
+
+    # save transaction
+    transaction.objects.create(
+        userd=booking.userd,
+        workshop=booking.workshop,
+        booking=booking,
+        amount=booking.payment,
+        order_id="manual_success",   # replace with razorpay order later
+        status="Paid"
+    )
+
+    return render(request, "success.html")
+
+
