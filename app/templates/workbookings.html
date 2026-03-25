@@ -228,13 +228,8 @@
         </button>
     </div>
     <ul class="nav-links">
-        <li><a href="index.html">HOME</a></li>
-        <li><a href="about.html">ABOUT</a></li>
-        <li><a href="contact.html">CONTACT</a></li>
-        <li><a href="register.html">REGISTER</a></li>
-        <li><a href="login.html">LOGIN</a></li>
-        <li><a href="profile.html">PROFILE</a></li>
-    </ul>
+        <li><a href="/workshophome/">HOME</a></li>
+   
 </nav>
 
 <div class="bookings-container">
@@ -292,12 +287,7 @@
     </button>
 
 {% elif b.status == "Approved" %}
-    <form method="POST" action="{% url 'make_payment' b.id %}">
-        {% csrf_token %}
-        <button type="submit" class="pay-btn-minimal">
-            Pay Now
-        </button>
-    </form>
+
 
 {% endif %}
 
