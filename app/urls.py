@@ -9,6 +9,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('userhome/', views.userhome, name='userhome'),
     path('workshopregister/', views.workshopregister, name='workshopregister'),
+    path('workshophome/', views.workshophome, name='workshophome'),
 
 
     path('success/', views.success, name='success'),
@@ -26,6 +27,7 @@ urlpatterns = [
     path('yourvehicles/', views.yourvehicles, name='yourvehicles'), 
     path("book/<int:id>/", views.book_service, name="book"),
     path('mybookings/', views.mybookings, name='mybookings'),
+    path('workbookings/', views.workbookings, name='workbookings'),
     path('servicerequestpage/', views.servicerequestpage, name='servicerequestpage'),
     path('update-booking/<int:booking_id>/<str:status>/',
      views.update_booking_status,

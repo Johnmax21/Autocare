@@ -125,6 +125,11 @@ def userhome(request):
     return render(request, 'userhome.html', {
         "is_logged_in": is_logged_in
     })
+def workshophome(request):
+    is_logged_in = 'email' in request.session
+    return render(request, 'workshophome.html', {
+        "is_logged_in": is_logged_in
+    })
 
 
 
@@ -518,3 +523,8 @@ def payment_success(request):
     return render(request, "success.html")
 
 
+def workbookings(request):
+    email = request.session.get('email')
+    cr = workshop.objects.get(email=email)
+    bookings = Booking.objects.filter(workshop=cr).order_by('-id')
+    return render(request, "workbookings.html", {"bookings": bookings})

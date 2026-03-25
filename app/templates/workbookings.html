@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings - AutoCare Motor Vehicle Service Excellence</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+
+<style>
+
+/* ================= MY BOOKINGS PAGE STYLES ================= */
+
+.bookings-container {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 20px 40px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bookings-card {
+    width: 100%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(201, 162, 39, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bookings-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(201,162,39,0.6), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.bookings-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.bookings-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #c9a227;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.bookings-subtitle {
+    color: #bfbfbf;
+    font-size: 16px;
+}
+
+/* ===== Booking Cards ===== */
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.booking-item {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(201, 162, 39, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.booking-item:hover {
+    border-color: rgba(201, 162, 39, 0.4);
+    background: rgba(201, 162, 39, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(201, 162, 39, 0.15);
+}
+
+.booking-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.2);
+}
+
+.booking-service-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #c9a227;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+}
+
+.booking-date-time .date {
+    font-weight: 600;
+    color: white;
+}
+
+.booking-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.booking-detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c9a227;
+    text-transform: uppercase;
+}
+
+.booking-detail-value {
+    font-size: 14px;
+    color: white;
+}
+
+.booking-detail-value.yes {
+    color: #4CAF50;
+    font-weight: 600;
+}
+
+.booking-detail-value.no {
+    color: #f44336;
+    font-weight: 600;
+}
+
+/* ===== Price Section ===== */
+
+.booking-price-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(201, 162, 39, 0.3);
+}
+
+.booking-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #c9a227;
+    text-transform: uppercase;
+}
+
+/* ===== Minimal Center Pay Button ===== */
+
+.pay-btn-wrapper {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.pay-btn-minimal {
+    display: inline-block;
+    padding: 8px 26px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    background: transparent;
+    color: #c9a227;
+    border: 1.5px solid #c9a227;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pay-btn-minimal:hover {
+    background: #c9a227;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(201, 162, 39, 0.3);
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+    .booking-header-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-logo">AUTOCARE</div>
+    <div class="nav-search">
+        <input type="text" class="search-input" placeholder="Search workshops..." id="navSearch">
+        <button class="search-btn" onclick="searchWorkshops()">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+        <li><a href="register.html">REGISTER</a></li>
+        <li><a href="login.html">LOGIN</a></li>
+        <li><a href="profile.html">PROFILE</a></li>
+    </ul>
+</nav>
+
+<div class="bookings-container">
+<div class="bookings-card">
+
+<div class="bookings-header">
+    <div class="bookings-title">My Bookings</div>
+    <div class="bookings-subtitle">View your service appointment history</div>
+</div>
+
+<div class="booking-list">
+
+{% for b in bookings %}
+<div class="booking-item">
+
+    <div class="booking-header-info">
+        <div class="booking-service-name">{{ b.services }}</div>
+        <div class="booking-date-time">
+            <div class="date">{{ b.booking_time|date:"d-m-Y" }}</div>
+        </div>
+    </div>
+
+    <div class="booking-details">
+        <div>
+            <div class="booking-detail-label">Vehicle</div>
+            <div class="booking-detail-value">{{ b.vehicle.vehicle_name }}</div>
+        </div>
+        <div>
+            <div class="booking-detail-label">Workshop</div>
+            <div class="booking-detail-value">{{ b.workshop.name }}</div>
+        </div>
+        <div>
+            <div class="booking-detail-label">Status</div>
+            <div class="booking-detail-value 
+                {% if b.status == 'Approved' %}yes
+                {% elif b.status == 'Declined' %}no
+                {% endif %}">
+                {{ b.status }}
+            </div>
+        </div>
+    </div>
+
+    <div class="booking-price-section">
+
+        <div class="booking-total">
+            <span>Total Amount</span>
+            <span>₹{{ b.payment }}</span>
+        </div>
+
+       <div class="pay-btn-wrapper">
+
+{% if b.is_paid %}
+    <button class="pay-btn-minimal" style="background:green; cursor:not-allowed;" disabled>
+        PAID
+    </button>
+
+{% elif b.status == "Approved" %}
+    <form method="POST" action="{% url 'make_payment' b.id %}">
+        {% csrf_token %}
+        <button type="submit" class="pay-btn-minimal">
+            Pay Now
+        </button>
+    </form>
+
+{% endif %}
+
+</div>
+
+
+</div>   
+</div>   
+</div>  
+
+{% empty %}
+
+<div style="text-align:center; padding:40px;">
+    <h3>No bookings found</h3>
+    <p>You have not booked any services yet.</p>
+</div>
+{% endfor %}
+
+</div>
+</div>
+</div>
+
+</body>
+</html>
