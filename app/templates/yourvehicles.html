@@ -253,7 +253,7 @@
         </button>
     </div>
     <ul class="nav-links">
-        <li><a href="/userhome/">HOME</a></li>
+        <li><a href="/uerhome/">HOME</a></li>
     
     </ul>
 </nav>
@@ -272,7 +272,7 @@
     </div>
 
     <!-- Vehicles Grid -->
-    <<div class="vehicles-container">
+    <div class="vehicles-container">
 
 {% for v in vehicles %}
     <div class="vehicle-card">
@@ -309,11 +309,7 @@
                 </button>
             </a>
 
-            <a href="{% url 'vehicle_details' v.id %}">
-                <button class="action-btn secondary-btn">
-                    <i class="fas fa-eye"></i> DETAILS
-                </button>
-            </a>
+          
 
             <a href="{% url 'delete_vehicle' v.id %}">
                 <button class="action-btn danger-btn">
@@ -338,7 +334,6 @@
 
 
 <!-- Notification -->
-<div class="notification" id="notification"></div>
 
 <script>
 function createParticles() {

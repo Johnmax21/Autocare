@@ -40,6 +40,11 @@ def register(request):
         gender = request.POST.get('gender')
         license = request.FILES.get('license')
 
+        # Check if email already exists
+        if user.objects.filter(email=email).exists():
+            alert_message = "<script>alert('Email Already Exists! Please use a different email.'); window.location.href='/register/';</script>"
+            return HttpResponse(alert_message)
+
         # Create and save user
         User = user(
             usernname=username,
@@ -50,10 +55,10 @@ def register(request):
             profile_picture=profile_picture,
             gender=gender,
             license=license
-
         )
         User.save()
-        alert_message="<script>alert('User Created Successfully'); window.location.href='/login/';</script>"
+
+        alert_message = "<script>alert('User Created Successfully'); window.location.href='/login/';</script>"
         return HttpResponse(alert_message)
         # return redirect('success')  # redirect to a success page
 
@@ -377,11 +382,49 @@ def register_vehicle(request):
          return redirect("profile")  # change to your profile URL name
 
     return render(request, "vehicleregistration.html")
+
 def yourvehicles(request):
     email=request.session['email']
     cr =user.objects.get(email=email)
     vehicles = VehicleRegistration.objects.filter(userd=cr)
     return render(request, "yourvehicles.html", {"vehicles": vehicles})
+
+def edit_vehicle(request, vehicle_id):
+    email = request.session['email']
+    cr = user.objects.get(email=email)
+    vehicle = get_object_or_404(VehicleRegistration, id=vehicle_id, userd=cr)
+
+    if request.method == 'POST':
+        vehicle.vehicle_name = request.POST.get('vehicle_name', vehicle.vehicle_name)
+        vehicle.vehicle_model = request.POST.get('vehicle_model', vehicle.vehicle_model)
+        vehicle.license_plate = request.POST.get('license_plate', vehicle.license_plate)
+
+        if request.FILES.get('vehicle_image'):
+            vehicle.vehicle_image = request.FILES.get('vehicle_image')
+        if request.FILES.get('rc'):
+            vehicle.rc = request.FILES.get('rc')
+        if request.FILES.get('insurance'):
+            vehicle.insurance = request.FILES.get('insurance')
+        if request.FILES.get('pollution'):
+            vehicle.pollution = request.FILES.get('pollution')
+
+        vehicle.save()
+        alert_message = "<script>alert('Vehicle Updated Successfully'); window.location.href='/yourvehicles/';</script>"
+        return HttpResponse(alert_message)
+
+    return render(request, "edit_vehicle.html", {"vehicle": vehicle})
+
+def delete_vehicle(request, vehicle_id):
+    email = request.session['email']
+    cr = user.objects.get(email=email)
+    vehicle = get_object_or_404(VehicleRegistration, id=vehicle_id, userd=cr)
+
+    if request.method == 'POST':
+        vehicle.delete()
+        alert_message = "<script>alert('Vehicle Removed Successfully'); window.location.href='/yourvehicles/';</script>"
+        return HttpResponse(alert_message)
+
+    return render(request, "delete_vehicle.html", {"vehicle": vehicle})
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import workshop, user, Booking, VehicleRegistration
 from django.contrib import messages

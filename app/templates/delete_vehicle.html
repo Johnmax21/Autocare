@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare – Remove Vehicle</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9a227;
+    --gold-dim: #8a6e1a;
+    --dark: #0a0a0a;
+    --dark2: #111111;
+    --dark3: #1a1a1a;
+    --dark4: #222222;
+    --text: #d4d4d4;
+    --text-dim: #888;
+    --white: #ffffff;
+    --red: #c0392b;
+    --red-dim: #922b21;
+    --red-glow: rgba(192,57,43,0.15);
+  }
+
+  html, body {
+    min-height: 100%;
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── Particles ── */
+  #particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .particle {
+    position: absolute;
+    bottom: -10px;
+    width: 2px; height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { transform: translateY(0) scale(1);   opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.2; }
+    100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+  }
+
+  /* ── Loading ── */
+  .loading-screen {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .loading-screen.hidden { opacity: 0; visibility: hidden; }
+  .car-loader {
+    width: 60px; height: 60px;
+    border: 3px solid var(--dark3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Page ── */
+  .page {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px 20px 80px;
+  }
+
+  .hero-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(10px, 1.2vw, 13px);
+    letter-spacing: 6px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .big-name {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(42px, 8vw, 90px);
+    font-weight: 700;
+    line-height: 0.88;
+    color: var(--white);
+    text-align: center;
+    letter-spacing: -1px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .big-name span { color: var(--gold); display: block; }
+
+  .divider {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  /* ── Confirm Card ── */
+  .confirm-card {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    background: var(--dark3);
+    border: 1px solid #2a2a2a;
+    padding: 50px 44px;
+    text-align: center;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+  }
+
+  /* red corner accents */
+  .confirm-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 40px; height: 40px;
+    border-top: 2px solid var(--red);
+    border-left: 2px solid var(--red);
+  }
+  .confirm-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 40px; height: 40px;
+    border-bottom: 2px solid var(--red);
+    border-right: 2px solid var(--red);
+  }
+
+  /* Warning icon */
+  .warn-icon {
+    width: 80px; height: 80px;
+    margin: 0 auto 24px;
+    border: 1px solid var(--red-dim);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    color: var(--red);
+    background: var(--red-glow);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192,57,43,0.3); }
+    50%       { box-shadow: 0 0 0 12px rgba(192,57,43,0); }
+  }
+
+  .confirm-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .confirm-msg {
+    font-size: 15px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .confirm-msg strong {
+    color: var(--gold);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* Vehicle info strip */
+  .vehicle-strip {
+    background: var(--dark4);
+    border: 1px solid #2e2e2e;
+    padding: 18px 22px;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+  .vehicle-strip-icon {
+    font-size: 22px;
+    color: var(--gold-dim);
+    flex-shrink: 0;
+  }
+  .vehicle-strip-info .vname {
+    font-family: 'Oswald', sans-serif;
+    font-size: 17px;
+    letter-spacing: 2px;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+  .vehicle-strip-info .vplate {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-delete {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 20px;
+    background: var(--red);
+    border: 1px solid var(--red);
+    color: var(--white);
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.25s;
+  }
+  .btn-delete:hover {
+    background: #e74c3c;
+    box-shadow: 0 0 30px rgba(192,57,43,0.35);
+  }
+
+  .btn-cancel {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid #3a3a3a;
+    color: var(--text-dim);
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.25s, color 0.25s;
+  }
+  .btn-cancel:hover {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+  }
+
+  .back-link {
+    margin-top: 44px;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.4s forwards;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+  .back-link i { margin-right: 8px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 500px) {
+    .confirm-card { padding: 36px 22px; }
+    .btn-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="car-loader"></div>
+</div>
+
+<div id="particles"></div>
+
+<main class="page">
+
+  <div class="hero-label">Motor Vehicle Service Excellence</div>
+  <div class="big-name">AUTO<span>CARE</span></div>
+  <div class="divider"></div>
+  <p class="subtitle">Remove Vehicle</p>
+
+  <div class="confirm-card">
+
+    <div class="warn-icon"><i class="fas fa-triangle-exclamation"></i></div>
+
+    <div class="confirm-title">Confirm Removal</div>
+    <p class="confirm-msg">
+      You are about to permanently remove this vehicle.<br>
+      <strong>This action cannot be undone.</strong>
+    </p>
+
+    <!-- Vehicle info strip -->
+    <div class="vehicle-strip">
+      <div class="vehicle-strip-icon"><i class="fas fa-car-side"></i></div>
+      <div class="vehicle-strip-info">
+        <div class="vname">{{ vehicle.vehicle_name }} – {{ vehicle.vehicle_model }}</div>
+        <div class="vplate"><i class="fas fa-id-card" style="margin-right:6px;"></i>{{ vehicle.license_plate }}</div>
+      </div>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="btn-row">
+        <button type="submit" class="btn-delete">
+          <i class="fas fa-trash" style="margin-right:10px;"></i>Yes, Remove
+        </button>
+        <a href="/yourvehicles/" class="btn-cancel">
+          <i class="fas fa-xmark" style="margin-right:10px;"></i>Cancel
+        </a>
+      </div>
+    </form>
+
+  </div>
+
+  <a href="/yourvehicles/" class="back-link"><i class="fas fa-arrow-left"></i>Back to My Vehicles</a>
+</main>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1200);
+  });
+
+  (function createParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 60; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.width = (1 + Math.random() * 2) + 'px';
+      p.style.height = p.style.width;
+      p.style.animationDuration = (12 + Math.random() * 14) + 's';
+      p.style.animationDelay = (Math.random() * 12) + 's';
+      container.appendChild(p);
+    }
+  })();
+</script>
+
+</body>
+</html>
