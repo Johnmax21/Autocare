@@ -98,6 +98,18 @@ def admin_dashboard(request):
 def user_list(request):
     users = user.objects.all()
     return render(request, 'user_list.html', {'users': users})
+def workshop_list(request):
+    users = workshop.objects.all()
+    return render(request, 'workshop_list.html', {'users': users})
+def vehicle_list(request):
+    users = VehicleRegistration.objects.all()
+    return render(request, 'vehicle_list.html', {'users': users})
+def bookinglist(request):
+    users = Booking.objects.all()
+    return render(request, 'booking_list.html', {'users': users})
+def transaction_list(request):
+    users = transaction.objects.all()
+    return render(request, 'transaction_list.html', {'users': users})
 
 
 

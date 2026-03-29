@@ -37,6 +37,10 @@ urlpatterns = [
   path("payment-success/", views.payment_success, name="payment_success"),
   path('edit-vehicle/<int:vehicle_id>/', views.edit_vehicle, name='edit_vehicle'),
   path('delete-vehicle/<int:vehicle_id>/', views.delete_vehicle, name='delete_vehicle'),
+  path('workshop/', views.workshop_list, name='workshoplist'),
+path('vehicles/', views.vehicle_list, name='vehicle_list'),
+path('bookings/', views.bookinglist, name='bookinglist'),
+path('transactions/', views.transaction_list, name='transaction_list'),
 
 
     # path('logout/', views.logout_view, name='logout'),

@@ -1,114 +1,517 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare – Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #c9a227; --gold-dim: #8a6e1a; --gold-faint: rgba(201,162,39,0.07);
+    --dark: #0a0a0a; --dark2: #111; --dark3: #1a1a1a; --dark4: #222;
+    --text: #d4d4d4; --text-dim: #777; --white: #fff;
+    --sidebar-w: 260px;
+  }
+  html, body { height: 100%; background: var(--dark); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+  /* ── Particles ── */
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .particle { position: absolute; bottom: -10px; width: 2px; height: 2px; background: var(--gold); border-radius: 50%; opacity: 0; animation: rise linear infinite; }
+  @keyframes rise { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.15; } 100% { transform: translateY(-100vh) scale(0); opacity: 0; } }
+
+  /* ── Loading ── */
+  .loading-screen { position: fixed; inset: 0; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.6s, visibility 0.6s; }
+  .loading-screen.hidden { opacity: 0; visibility: hidden; }
+  .car-loader { width: 60px; height: 60px; border: 3px solid var(--dark3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Layout ── */
+  .layout { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--dark3);
+    border-right: 1px solid #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 100;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .sidebar-brand {
+    padding: 32px 24px 28px;
+    border-bottom: 1px solid #1e1e1e;
+    position: relative;
+  }
+  .sidebar-brand::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 28px; height: 28px;
+    border-top: 2px solid var(--gold);
+    border-left: 2px solid var(--gold);
+  }
+  .sidebar-brand .label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sidebar-brand .name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .sidebar-brand .name span { color: var(--gold); }
+  .sidebar-brand .role-badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 12px;
+    border: 1px solid var(--gold-dim);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+  }
+
+  /* Nav */
+  .sidebar-nav { flex: 1; padding: 24px 16px; overflow-y: auto; }
+  .nav-section-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  .nav-section-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 4px;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    position: relative;
+    transition: color 0.2s, background 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 2px; height: 0;
+    background: var(--gold);
+    transition: height 0.2s;
+  }
+  .nav-item:hover {
+    color: var(--white);
+    background: var(--gold-faint);
+    border-color: #2a2a2a;
+  }
+  .nav-item:hover::before { height: 60%; }
+  .nav-item .nav-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    border: 1px solid #2a2a2a;
+    background: var(--dark4);
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-item:hover .nav-icon { border-color: var(--gold-dim); color: var(--gold); }
+  .nav-item.logout { color: #888; margin-top: 8px; }
+  .nav-item.logout:hover { color: #e05555; background: rgba(224,85,85,0.07); border-color: #3a1a1a; }
+  .nav-item.logout:hover::before { background: #e05555; height: 60%; }
+  .nav-item.logout:hover .nav-icon { border-color: #c0392b; color: #e05555; }
+
+  /* Sidebar footer */
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #1e1e1e;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ── Main content ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 48px 40px 80px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .topbar-title .eyebrow {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .topbar-title h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .topbar-title h1 span { color: var(--gold); }
+  .topbar-divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin-top: 14px; }
+
+  .topbar-meta { text-align: right; font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+  .topbar-meta .time { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--white); letter-spacing: 2px; }
+
+  /* Stats strip */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    position: relative;
+    background: var(--dark3);
+    border: 1px solid #222;
+    padding: 22px 20px 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .stat-box:hover { border-color: var(--gold-dim); box-shadow: 0 8px 32px rgba(201,162,39,0.08); }
+  .stat-icon { font-size: 18px; color: var(--gold-dim); margin-bottom: 12px; }
+  .stat-val { font-family: 'Oswald', sans-serif; font-size: 30px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .stat-label { font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-top: 6px; }
+
+  /* Section label */
+  .section-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    margin-top: 36px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, #2a2a2a, transparent); }
+  .section-label:first-of-type { margin-top: 0; }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .dash-card {
+    position: relative;
+    background: var(--dark3);
+    border: 1px solid #222;
+    padding: 32px 24px 28px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .dash-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 26px; height: 26px;
+    border-top: 2px solid var(--gold);
+    border-left: 2px solid var(--gold);
+    transition: width 0.3s, height 0.3s;
+  }
+  .dash-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 26px; height: 26px;
+    border-bottom: 2px solid var(--gold);
+    border-right: 2px solid var(--gold);
+    transition: width 0.3s, height 0.3s;
+  }
+  .dash-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 16px 48px rgba(201,162,39,0.1);
+  }
+  .dash-card:hover::before,
+  .dash-card:hover::after { width: 50px; height: 50px; }
+
+  .dash-card .shimmer {
+    position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(201,162,39,0.04) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .dash-card:hover .shimmer { transform: translateX(100%); }
+
+  .card-icon-wrap {
+    width: 52px; height: 52px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--gold);
+    background: var(--gold-faint);
+    margin-bottom: 18px;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .dash-card:hover .card-icon-wrap { background: rgba(201,162,39,0.14); transform: scale(1.08); }
+
+  .card-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; margin-bottom: 20px; }
+  .card-cta {
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-cta i { font-size: 10px; transition: transform 0.2s; }
+  .dash-card:hover .card-cta i { transform: translateX(4px); }
+
+  /* Welcome banner */
+  .welcome-banner {
+    position: relative;
+    background: var(--dark3);
+    border: 1px solid #222;
+    padding: 36px 40px;
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .welcome-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 36px; height: 36px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .welcome-banner::after { content: ''; position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+  .welcome-banner .bg-text {
+    position: absolute;
+    right: -10px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Oswald', sans-serif;
+    font-size: 100px;
+    font-weight: 700;
+    color: rgba(201,162,39,0.04);
+    letter-spacing: -4px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .welcome-banner h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .welcome-banner p { font-size: 15px; color: var(--text-dim); max-width: 500px; line-height: 1.6; letter-spacing: 0.5px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; height: auto; position: relative; }
+    .main { margin-left: 0; padding: 28px 16px 60px; }
+    .layout { flex-direction: column; }
+    .welcome-banner { padding: 24px 20px; }
+  }
+</style>
 </head>
-<body class="bg-light-gray">
+<body>
 
-    <div class="flex min-h-screen">
+<div class="loading-screen" id="loadingScreen"><div class="car-loader"></div></div>
+<div id="particles"></div>
 
-        <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-lg p-5 border-r border-gray-200">
-            <div class="text-center mb-10">
-                <h2 class="text-2xl font-semibold text-gray-800">Admin Panel</h2>
-            </div>
-            <ul class="space-y-4">
-                <!-- User Profiles Link -->
-                <li>
-                    <a href="/users/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
-                        <i class="fas fa-users text-xl"></i>
-                        <span>User Profiles</span>
-                    </a>
-                </li>
-                     <li>
-                    <a href="/product/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
-                        <i class="fas fa-users text-xl"></i>
-                        <span>Products</span>
-                    </a>
-                </li>
-                <!-- Staff Profiles Link -->
-            
-                <li>
-                    <a href="/addproduct/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
-                        <i class="fas fa-id-badge text-xl"></i>
-                        <span>Add Product</span>
-                    </a>
-                </li>
-                <!-- Product Details Link -->
-              
-                <!-- Admin Profile Link -->
-                
-                <!-- Logout Link -->
-                <li>
-                    <a href="/index/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-red-500 hover:text-white hover:shadow-md transition-all">
-                        <i class="fas fa-sign-out-alt text-xl"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/gallery_list/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
-                        <i class="fas fa-user-cog text-xl"></i>
-                        <span>Gallery Edit</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/monitor/" class="flex items-center space-x-4 py-3 px-4 rounded-lg text-gray-800 hover:bg-sky-100 hover:shadow-md transition-all">
-                        <i class="fas fa-user-cog text-xl"></i>
-                        <span>Monitor</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+<div class="layout">
 
-        <!-- Main Content -->
-        <div class="flex-1 bg-gray-50 p-8">
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h1 class="text-3xl font-semibold text-gray-800 mb-6">Welcome to the Admin Panel</h1>
-                <p class="text-lg text-gray-600 mb-6">Manage your users, staff, products, and more.</p>
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="label">Motor Vehicle Service</div>
+      <div class="name">AUTO<span>CARE</span></div>
+      <div class="role-badge"><i class="fas fa-shield-halved" style="margin-right:6px;"></i>Admin</div>
+    </div>
 
-                <!-- Dashboard Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Card 1 -->
-                    <div class="bg-blue-600 text-white p-6 rounded-lg shadow-md hover:bg-blue-700 transition-all transform hover:scale-105">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <i class="fas fa-users text-3xl"></i>
-                            <h3 class="text-2xl font-semibold">User Profiles</h3>
-                        </div>
-                        <p>Manage and view all user profiles here.</p>
-                    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Management</div>
 
-                    <!-- Card 2 -->
-                    <div class="bg-green-600 text-white p-6 rounded-lg shadow-md hover:bg-green-700 transition-all transform hover:scale-105">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <i class="fas fa-id-badge text-3xl"></i>
-                            <h3 class="text-2xl font-semibold">Staff Profiles</h3>
-                        </div>
-                        <p>Manage staff and their details here.</p>
-                    </div>
+      <a href="/users/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-users"></i></div>
+        User Profiles
+      </a>
+      <a href="/workshop/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-store"></i></div>
+        Workshops
+      </a>
+      <a href="/vehicles/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-car"></i></div>
+        Vehicles
+      </a>
 
-                    <!-- Card 3 -->
-                    <div class="bg-purple-600 text-white p-6 rounded-lg shadow-md hover:bg-purple-700 transition-all transform hover:scale-105">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <i class="fas fa-box text-3xl"></i>
-                            <h3 class="text-2xl font-semibold">Product Details</h3>
-                        </div>
-                        <p>View and manage the product catalog here.</p>
-                    </div>
-                </div>
+      <div class="nav-section-label">Operations</div>
 
-                <!-- Get Started Section -->
-                <div class="mt-10">
-                    <h2 class="text-3xl font-semibold text-gray-800">Get Started</h2>
-                    <p class="text-gray-600 mt-4">Select an option from the sidebar to manage users, staff, products, or your admin profile. Everything is easy to access.</p>
-                </div>
-            </div>
-        </div>
+      <a href="/bookings/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-calendar-check"></i></div>
+        Bookings
+      </a>
+      <a href="/transactions/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+        Transactions
+      </a>
+
+      <div class="nav-section-label">Account</div>
+
+      <a href="/logout/" class="nav-item logout">
+        <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+        Logout
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <i class="fas fa-circle" style="color:var(--gold); font-size:7px; margin-right:6px;"></i>
+      System Online
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="topbar-title">
+        <div class="eyebrow">Admin Dashboard</div>
+        <h1>CONTROL <span>CENTER</span></h1>
+        <div class="topbar-divider"></div>
+      </div>
+      <div class="topbar-meta">
+        <div class="time" id="clock">--:--</div>
+        <div style="margin-top:4px;" id="dateStr">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Welcome banner -->
+    <div class="welcome-banner">
+      <div class="bg-text">ADMIN</div>
+      <h2>Welcome Back, Administrator</h2>
+      <p>Manage users, workshops, vehicles, bookings, and transactions from a single control center. Everything is easy to access from the sidebar.</p>
+    </div>
+
+    <!-- Quick nav cards -->
+    <div class="section-label">Quick Access</div>
+    <div class="cards-grid">
+
+      <a href="/users/" class="dash-card">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap"><i class="fas fa-users"></i></div>
+        <div class="card-title">User Profiles</div>
+        <div class="card-desc">View and manage all registered user accounts on the platform.</div>
+        <div class="card-cta">Manage <i class="fas fa-arrow-right"></i></div>
+      </a>
+
+      <a href="/workshop/" class="dash-card">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap"><i class="fas fa-store"></i></div>
+        <div class="card-title">Workshops</div>
+        <div class="card-desc">Monitor registered workshops, approvals, services and availability.</div>
+        <div class="card-cta">Manage <i class="fas fa-arrow-right"></i></div>
+      </a>
+
+      <a href="/vehicles/" class="dash-card">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap"><i class="fas fa-car-side"></i></div>
+        <div class="card-title">Vehicles</div>
+        <div class="card-desc">Browse the complete vehicle registry and associated documents.</div>
+        <div class="card-cta">Manage <i class="fas fa-arrow-right"></i></div>
+      </a>
+
+      <a href="/bookings/" class="dash-card">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap"><i class="fas fa-calendar-check"></i></div>
+        <div class="card-title">Bookings</div>
+        <div class="card-desc">Track all service bookings, statuses, and payment records.</div>
+        <div class="card-cta">Manage <i class="fas fa-arrow-right"></i></div>
+      </a>
+
+      <a href="/transactions/" class="dash-card">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap"><i class="fas fa-receipt"></i></div>
+        <div class="card-title">Transactions</div>
+        <div class="card-desc">View the full payment ledger with order IDs and statuses.</div>
+        <div class="card-cta">Manage <i class="fas fa-arrow-right"></i></div>
+      </a>
+
+      <a href="/logout/" class="dash-card" style="border-color:#2a1a1a;">
+        <div class="shimmer"></div>
+        <div class="card-icon-wrap" style="border-color:#5a2a2a; color:#c0392b; background:rgba(192,57,43,0.06);"><i class="fas fa-sign-out-alt"></i></div>
+        <div class="card-title" style="color:#e05555;">Logout</div>
+        <div class="card-desc">End your admin session and return to the login portal.</div>
+        <div class="card-cta" style="color:#c0392b;">Sign Out <i class="fas fa-arrow-right"></i></div>
+      </a>
 
     </div>
 
+  </main>
+</div>
+
+<script>
+  window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1200));
+
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('dateStr').textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+  updateClock(); setInterval(updateClock, 1000);
+
+  // Particles
+  (function(){ const c = document.getElementById('particles'); for(let i=0;i<60;i++){ const p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.width=(1+Math.random()*2)+'px'; p.style.height=p.style.width; p.style.animationDuration=(12+Math.random()*14)+'s'; p.style.animationDelay=(Math.random()*12)+'s'; c.appendChild(p); } })();
+</script>
 </body>
 </html>

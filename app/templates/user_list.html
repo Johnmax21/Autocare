@@ -1,49 +1,258 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User List</title>
-    <style>
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        img { height: 50px; width: 50px; object-fit: cover; border-radius: 50%; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoCare – User List</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #c9a227; --gold-dim: #8a6e1a; --gold-faint: rgba(201,162,39,0.07);
+    --dark: #0a0a0a; --dark3: #1a1a1a; --dark4: #222;
+    --text: #d4d4d4; --text-dim: #777; --white: #fff;
+    --sidebar-w: 260px;
+  }
+  html, body { min-height: 100%; background: var(--dark); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .particle { position: absolute; bottom: -10px; width: 2px; height: 2px; background: var(--gold); border-radius: 50%; opacity: 0; animation: rise linear infinite; }
+  @keyframes rise { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.15; } 100% { transform: translateY(-100vh) scale(0); opacity: 0; } }
+
+  .loading-screen { position: fixed; inset: 0; background: var(--dark); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.6s, visibility 0.6s; }
+  .loading-screen.hidden { opacity: 0; visibility: hidden; }
+  .car-loader { width: 60px; height: 60px; border: 3px solid var(--dark3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Layout */
+  .layout { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { width: var(--sidebar-w); background: var(--dark3); border-right: 1px solid #1e1e1e; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; opacity: 0; animation: fadeUp 0.8s 0.3s forwards; }
+  .sidebar-brand { padding: 32px 24px 28px; border-bottom: 1px solid #1e1e1e; position: relative; }
+  .sidebar-brand::before { content: ''; position: absolute; top: 0; left: 0; width: 28px; height: 28px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .sidebar-brand .label { font-family: 'Oswald', sans-serif; font-size: 10px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .sidebar-brand .name { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; color: var(--white); line-height: 1; letter-spacing: -0.5px; }
+  .sidebar-brand .name span { color: var(--gold); }
+  .sidebar-brand .role-badge { display: inline-block; margin-top: 10px; padding: 3px 12px; border: 1px solid var(--gold-dim); font-size: 10px; letter-spacing: 3px; color: var(--gold); font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+
+  .sidebar-nav { flex: 1; padding: 24px 16px; overflow-y: auto; }
+  .nav-section-label { font-family: 'Oswald', sans-serif; font-size: 9px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; padding: 0 10px; margin-bottom: 10px; margin-top: 20px; }
+  .nav-section-label:first-child { margin-top: 0; }
+
+  .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; margin-bottom: 4px; text-decoration: none; color: var(--text-dim); font-size: 14px; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; font-weight: 600; position: relative; transition: color 0.2s, background 0.2s; border: 1px solid transparent; }
+  .nav-item::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 2px; height: 0; background: var(--gold); transition: height 0.2s; }
+  .nav-item:hover { color: var(--white); background: var(--gold-faint); border-color: #2a2a2a; }
+  .nav-item:hover::before { height: 60%; }
+  .nav-item.active { color: var(--white); background: var(--gold-faint); border-color: #2a2a2a; }
+  .nav-item.active::before { height: 60%; }
+  .nav-item .nav-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 15px; border: 1px solid #2a2a2a; background: var(--dark4); transition: border-color 0.2s, color 0.2s; flex-shrink: 0; }
+  .nav-item:hover .nav-icon, .nav-item.active .nav-icon { border-color: var(--gold-dim); color: var(--gold); }
+  .nav-item.logout { color: #888; margin-top: 8px; }
+  .nav-item.logout:hover { color: #e05555; background: rgba(224,85,85,0.07); border-color: #3a1a1a; }
+  .nav-item.logout:hover::before { background: #e05555; height: 60%; }
+  .nav-item.logout:hover .nav-icon { border-color: #c0392b; color: #e05555; }
+
+  .sidebar-footer { padding: 16px 24px; border-top: 1px solid #1e1e1e; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+
+  /* Main */
+  .main { margin-left: var(--sidebar-w); flex: 1; padding: 48px 40px 80px; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+
+  /* Topbar */
+  .topbar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
+  .topbar-title .eyebrow { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .topbar-title h1 { font-family: 'Oswald', sans-serif; font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: var(--white); line-height: 1; letter-spacing: -0.5px; }
+  .topbar-title h1 span { color: var(--gold); }
+  .topbar-divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin-top: 14px; }
+
+  /* Stat box */
+  .stat-box { position: relative; background: var(--dark3); border: 1px solid #222; padding: 22px 28px; display: inline-block; min-width: 160px; }
+  .stat-box::before { content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .stat-val { font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700; color: var(--gold); }
+  .stat-label { font-size: 11px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-top: 4px; }
+
+  /* Search bar */
+  .toolbar { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 360px; }
+  .search-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px; }
+  .search-wrap input { width: 100%; background: var(--dark3); border: 1px solid #2a2a2a; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 14px; padding: 11px 14px 11px 38px; outline: none; transition: border-color 0.2s; }
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap input::placeholder { color: var(--text-dim); }
+
+  /* Table card */
+  .table-card { position: relative; background: var(--dark3); border: 1px solid #2a2a2a; overflow: hidden; }
+  .table-card::before { content: ''; position: absolute; top: 0; left: 0; width: 36px; height: 36px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); z-index: 1; }
+  .table-card::after { content: ''; position: absolute; bottom: 0; right: 0; width: 36px; height: 36px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+
+  .table-header { padding: 24px 32px; border-bottom: 1px solid #2a2a2a; display: flex; align-items: center; gap: 14px; }
+  .table-header-icon { width: 44px; height: 44px; border: 1px solid var(--gold-dim); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--gold); background: var(--gold-faint); }
+  .table-header-title { font-family: 'Oswald', sans-serif; font-size: 18px; letter-spacing: 3px; color: var(--white); text-transform: uppercase; }
+  .table-header-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; margin-top: 2px; }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid #2a2a2a; }
+  thead th { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; padding: 16px 20px; text-align: left; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #1e1e1e; transition: background 0.2s; }
+  tbody tr:hover { background: rgba(201,162,39,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 14px 20px; font-size: 14px; color: var(--text); vertical-align: middle; }
+
+  /* Avatar */
+  .user-cell { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold-dim); flex-shrink: 0; }
+  .avatar-placeholder { width: 40px; height: 40px; border-radius: 50%; background: var(--dark4); border: 1px solid #333; display: inline-flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 15px; flex-shrink: 0; }
+  .user-name { font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--white); letter-spacing: 1px; }
+  .user-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; margin-top: 2px; }
+
+  .empty-row td { text-align: center; padding: 70px; color: var(--text-dim); font-family: 'Oswald', sans-serif; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 36px; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .back-link:hover { color: var(--gold); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; height: auto; position: relative; }
+    .main { margin-left: 0; padding: 28px 16px 60px; }
+    .layout { flex-direction: column; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>User List</h1>
- 
+<div class="loading-screen" id="loadingScreen"><div class="car-loader"></div></div>
+<div id="particles"></div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Profile</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}">
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.address }}</td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="5">No users found.</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<div class="layout">
 
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="label">Motor Vehicle Service</div>
+      <div class="name">AUTO<span>CARE</span></div>
+      <div class="role-badge"><i class="fas fa-shield-halved" style="margin-right:6px;"></i>Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Management</div>
+      <a href="/users/" class="nav-item active">
+        <div class="nav-icon"><i class="fas fa-users"></i></div>User Profiles
+      </a>
+      <a href="/workshop/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-store"></i></div>Workshops
+      </a>
+      <a href="/vehicles/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-car"></i></div>Vehicles
+      </a>
+      <div class="nav-section-label">Operations</div>
+      <a href="/bookings/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-calendar-check"></i></div>Bookings
+      </a>
+      <a href="/transactions/" class="nav-item">
+        <div class="nav-icon"><i class="fas fa-receipt"></i></div>Transactions
+      </a>
+      <div class="nav-section-label">Account</div>
+      <a href="/logout/" class="nav-item logout">
+        <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>Logout
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <i class="fas fa-circle" style="color:var(--gold); font-size:7px; margin-right:6px;"></i>System Online
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-title">
+        <div class="eyebrow">Admin Panel</div>
+        <h1>USER <span>PROFILES</span></h1>
+        <div class="topbar-divider"></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">{{ users|length }}</div>
+        <div class="stat-label">Registered Users</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search by name, email, phone...">
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-header-icon"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="table-header-title">All Users</div>
+          <div class="table-header-sub">Complete user registry</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td style="color:var(--text-dim);">{{ forloop.counter }}</td>
+              <td>
+                <div class="user-cell">
+                  {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" class="avatar" alt="profile">
+                  {% else %}
+                    <span class="avatar-placeholder"><i class="fas fa-user"></i></span>
+                  {% endif %}
+                  <div>
+                    <div class="user-name">{{ user.username }}</div>
+                    <div class="user-sub">{{ user.gender|default:"" }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone|default:"—" }}</td>
+              <td style="max-width:200px; white-space:normal; font-size:13px; color:var(--text-dim);">{{ user.address|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr class="empty-row">
+              <td colspan="5"><i class="fas fa-users-slash" style="margin-right:10px;"></i>No users found</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <a href="/adminpanel/" class="back-link"><i class="fas fa-arrow-left"></i>Back to Dashboard</a>
+  </main>
+</div>
+
+<script>
+  window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 1200));
+
+  // Live search
+  document.getElementById('searchInput').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#userTable tbody tr:not(.empty-row)').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+
+  // Particles
+  (function(){ const c = document.getElementById('particles'); for(let i=0;i<60;i++){ const p=document.createElement('div'); p.className='particle'; p.style.left=Math.random()*100+'%'; p.style.width=(1+Math.random()*2)+'px'; p.style.height=p.style.width; p.style.animationDuration=(12+Math.random()*14)+'s'; p.style.animationDelay=(Math.random()*12)+'s'; c.appendChild(p); } })();
+</script>
 </body>
 </html>
