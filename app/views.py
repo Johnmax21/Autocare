@@ -571,3 +571,7 @@ def workbookings(request):
     cr = workshop.objects.get(email=email)
     bookings = Booking.objects.filter(workshop=cr).order_by('-id')
     return render(request, "workbookings.html", {"bookings": bookings})
+
+def logout(request):
+    request.session.flush()
+    return redirect("index")
